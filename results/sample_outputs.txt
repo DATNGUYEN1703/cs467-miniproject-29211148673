@@ -1,0 +1,68 @@
+MP-A03: THREE REQUIRED TEST CASES
+Dataset is fictional; scores are ranking signals, not probabilities.
+English syllabi and English goal statements are supported.
+
+TEST 1 - Career goal query (hybrid)
+Query: I want to learn backend APIs, cloud deployment, and databases
+1. C036 SWE390 | Serverless Cloud APIs (New Elective)
+   score=0.5490 | cosine=0.5230 | ratings=0
+   Shared terms: cloud, apis cloud, apis, cloud deployment; new course, no ratings (global-mean prior)
+2. C004 SWE304 | Distributed Microservices
+   score=0.4395 | cosine=0.3601 | ratings=9
+   Shared terms: cloud deployment, apis, cloud, deployment; 9 ratings
+3. C002 SWE302 | Cloud Application Deployment
+   score=0.4008 | cosine=0.3350 | ratings=6
+   Shared terms: cloud, deployment, cloud deployment, backend; 6 ratings
+4. C001 SWE301 | Backend API Development
+   score=0.3519 | cosine=0.2232 | ratings=7
+   Shared terms: apis, backend apis, backend, databases; 7 ratings
+5. C006 SWE306 | NoSQL and Data Storage
+   score=0.2675 | cosine=0.1204 | ratings=6
+   Shared terms: databases, backend; 6 ratings
+
+TEST 2 - Existing AI/data student U001 (hybrid)
+Observed AI/data courses rated 5/5:
+  C007: Applied Machine Learning (5/5)
+  C008: Deep Learning Foundations (5/5)
+  C009: Natural Language Processing (5/5)
+  C010: Data Mining and Analytics (5/5)
+  C011: Computer Vision (5/5)
+  C012: Recommendation Systems (5/5)
+  C035: Responsible Artificial Intelligence (5/5)
+Next unseen electives:
+1. C022 UX304 | Mobile Interaction Design
+   score=0.3611 | cosine=0.0068 | CF=4.565/5 | ratings=5
+   Shared terms: user, design; 5 ratings
+2. C006 SWE306 | NoSQL and Data Storage
+   score=0.3502 | cosine=0.0387 | CF=3.994/5 | ratings=6
+   Shared terms: data, build, document, backend; 6 ratings
+3. C001 SWE301 | Backend API Development
+   score=0.3420 | cosine=0.0518 | CF=3.654/5 | ratings=7
+   Shared terms: python, build, validation, apis; 7 ratings
+4. C030 BUS306 | Operations Analytics
+   score=0.3405 | cosine=0.0450 | CF=4.123/5 | ratings=8
+   Shared terms: data, analytics, model, business; 8 ratings
+5. C016 SEC304 | Secure Software Design
+   score=0.3334 | cosine=0.0030 | CF=4.056/5 | ratings=5
+   Shared terms: apply, design; 5 ratings
+
+TEST 3 - Add a newly launched course without ratings
+Catalog before: 35; after: 36; ratings unchanged: 252
+Added C036: Serverless Cloud APIs (New Elective) (0 student ratings)
+Query: I want to build serverless backend APIs with cloud functions, cloud deployment and managed databases
+1. C036 SWE390 | Serverless Cloud APIs (New Elective)
+   score=0.6921 | cosine=0.7139 | ratings=0
+   Shared terms: cloud, serverless, cloud functions, functions; new course, no ratings (global-mean prior)
+2. C004 SWE304 | Distributed Microservices
+   score=0.3684 | cosine=0.2654 | ratings=9
+   Shared terms: cloud, cloud deployment, apis, deployment; 9 ratings
+3. C002 SWE302 | Cloud Application Deployment
+   score=0.3446 | cosine=0.2602 | ratings=6
+   Shared terms: cloud, deployment, cloud deployment, backend; 6 ratings
+4. C001 SWE301 | Backend API Development
+   score=0.3066 | cosine=0.1628 | ratings=7
+   Shared terms: apis, backend apis, backend, databases; 7 ratings
+5. C006 SWE306 | NoSQL and Data Storage
+   score=0.2475 | cosine=0.0937 | ratings=6
+   Shared terms: databases, backend, build; 6 ratings
+PASS: the new unrated elective appears in Top-5 via its syllabus terms.

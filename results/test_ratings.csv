@@ -1,0 +1,57 @@
+user_id,item_id,rating,feedback_comment
+U001,C007,5,Strong practical skills for my future career.
+U001,C014,2,Some useful topics but limited interest.
+U001,C024,3,A balanced elective for exploring the subject.
+U001,C026,4,Clear examples and useful hands on work.
+U002,C002,4,Clear examples and useful hands on work.
+U002,C004,5,I would recommend the projects to classmates.
+U002,C018,3,Helpful concepts although I need more practice.
+U002,C019,2,I found the material difficult to connect with.
+U003,C003,5,I would recommend the projects to classmates.
+U003,C019,3,Useful introduction with a few challenging labs.
+U003,C022,3,Useful introduction with a few challenging labs.
+U003,C024,4,Clear examples and useful hands on work.
+U004,C005,1,The subject was not a good fit for me.
+U004,C009,4,The material supports my career plans.
+U004,C030,4,Clear examples and useful hands on work.
+U004,C031,3,A balanced elective for exploring the subject.
+U005,C012,3,Useful introduction with a few challenging labs.
+U005,C015,4,Clear examples and useful hands on work.
+U005,C016,4,Clear examples and useful hands on work.
+U005,C034,3,Helpful concepts although I need more practice.
+U006,C003,2,The labs were outside my main goals.
+U006,C013,2,The labs were outside my main goals.
+U006,C028,3,Useful introduction with a few challenging labs.
+U006,C030,3,Helpful concepts although I need more practice.
+U007,C005,2,I found the material difficult to connect with.
+U007,C018,3,A balanced elective for exploring the subject.
+U007,C026,5,I would recommend the projects to classmates.
+U007,C035,4,Clear examples and useful hands on work.
+U008,C004,3,Helpful concepts although I need more practice.
+U008,C008,2,Some useful topics but limited interest.
+U008,C019,3,Useful introduction with a few challenging labs.
+U008,C020,2,Some useful topics but limited interest.
+U009,C006,4,Practical projects helped build my skills.
+U009,C012,5,Strong practical skills for my future career.
+U009,C024,2,I found the material difficult to connect with.
+U009,C035,5,I would recommend the projects to classmates.
+U010,C013,5,Strong practical skills for my future career.
+U010,C014,5,Excellent fit for my preferred specialization.
+U010,C027,1,I prefer a different career direction.
+U010,C032,5,Strong practical skills for my future career.
+U011,C004,3,A balanced elective for exploring the subject.
+U011,C005,2,I found the material difficult to connect with.
+U011,C011,2,I found the material difficult to connect with.
+U011,C020,5,Strong practical skills for my future career.
+U012,C010,4,Clear examples and useful hands on work.
+U012,C025,4,Clear examples and useful hands on work.
+U012,C027,5,I would recommend the projects to classmates.
+U012,C034,4,Clear examples and useful hands on work.
+U013,C002,4,Clear examples and useful hands on work.
+U013,C006,4,Clear examples and useful hands on work.
+U013,C017,3,Useful introduction with a few challenging labs.
+U013,C021,4,Clear examples and useful hands on work.
+U014,C012,4,Clear examples and useful hands on work.
+U014,C025,3,Useful introduction with a few challenging labs.
+U014,C026,3,Helpful concepts although I need more practice.
+U014,C029,1,I prefer a different career direction.

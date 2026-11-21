@@ -1,0 +1,25 @@
+Offline evaluation (seed=42, relevant >=4, K=5)
+    method  precision_at_5  recall_at_5  users  hits
+popularity          0.0571       0.1389     14     4
+   content          0.2429       0.6458     14    17
+        cf          0.1143       0.3125     14     8
+    hybrid          0.1714       0.5069     14    12
+
+CF MAE=0.9168; RMSE=1.1288
+{
+  "seed": 42,
+  "top_k": 5,
+  "relevant_rating_min": 4,
+  "train_ratings": 196,
+  "test_ratings": 56,
+  "test_fraction_actual": 0.2222222222222222,
+  "users": 14,
+  "users_with_hidden_relevant": 12,
+  "catalog_size": 36,
+  "rating_prediction_metrics": {
+    "method": "cf",
+    "mae": 0.916825637317416,
+    "rmse": 1.1288082812250502
+  },
+  "protocol": "Per-user seeded random holdout; rank the full catalog excluding training history. Unobserved items count as non-hits. TF-IDF sees catalog metadata only."
+}
