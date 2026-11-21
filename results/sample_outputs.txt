@@ -20,7 +20,7 @@ Query: I want to learn backend APIs, cloud deployment, and databases
    score=0.2675 | cosine=0.1204 | ratings=6
    Shared terms: databases, backend; 6 ratings
 
-TEST 2 - Existing AI/data student U001 (hybrid)
+TEST 2 - Existing AI/data student U001 (content and hybrid comparison)
 Observed AI/data courses rated 5/5:
   C007: Applied Machine Learning (5/5)
   C008: Deep Learning Foundations (5/5)
@@ -29,7 +29,23 @@ Observed AI/data courses rated 5/5:
   C011: Computer Vision (5/5)
   C012: Recommendation Systems (5/5)
   C035: Responsible Artificial Intelligence (5/5)
-Next unseen electives:
+Content-based next unseen electives:
+1. C029 BUS305 | Financial Data Analytics
+   score=0.0801 | cosine=0.0801 | ratings=9
+   Shared terms: data, python, analytics, build; 9 ratings
+2. C032 CS302 | Statistical Computing
+   score=0.0728 | cosine=0.0728 | ratings=5
+   Shared terms: data, python, analysis, experiments; 5 ratings
+3. C025 BUS301 | Business Intelligence
+   score=0.0683 | cosine=0.0683 | ratings=8
+   Shared terms: data, analytics, intelligence, model; 8 ratings
+4. C001 SWE301 | Backend API Development
+   score=0.0518 | cosine=0.0518 | ratings=7
+   Shared terms: python, build, validation, apis; 7 ratings
+5. C030 BUS306 | Operations Analytics
+   score=0.0450 | cosine=0.0450 | ratings=8
+   Shared terms: data, analytics, model, business; 8 ratings
+Hybrid next unseen electives:
 1. C022 UX304 | Mobile Interaction Design
    score=0.3611 | cosine=0.0068 | CF=4.565/5 | ratings=5
    Shared terms: user, design; 5 ratings

@@ -1,0 +1,185 @@
+HƯỚNG DẪN ĐỌC, CHẠY VÀ GIẢI THÍCH PROJECT MP-A03
+
+0. ĐỌC TRƯỚC
+
+Bản dịch đầy đủ: docs/BAN_DICH_DE_BAI_VI.txt.
+Báo cáo, đầu ra và chỉ số thực tế: README.md và results/.
+Mọi môn học, sinh viên khóa trên và nhận xét trong dữ liệu đều là mô phỏng.
+Sử dụng hỗ trợ AI không thay thế việc bạn hiểu và tự trình bày bài cá nhân. Phần hỗ trợ được công khai trong README. Đề gốc yêu cầu bạn chạy trực tiếp và giải thích khi chấm bài.
+
+1. CÀI ĐẶT TRÊN WINDOWS
+
+Giải nén toàn bộ project nếu dùng bản ZIP. Để giữ lịch sử commit, dùng bản thư mục có .git hoặc clone repository GitHub sau khi đã xuất bản. Mở PowerShell trong thư mục cs467-miniproject-29211148673.
+
+Kiểm tra Python (bản kết quả đi kèm được chạy bằng Python 3.13.7):
+    python --version
+
+Tạo môi trường riêng:
+    python -m venv .venv
+
+Cài thư viện, không cần kích hoạt môi trường:
+    .\.venv\Scripts\python.exe -m pip install -r requirements.txt
+
+Muốn dùng đúng toàn bộ phiên bản môi trường đã kiểm thử trên Windows/Python 3.13:
+    .\.venv\Scripts\python.exe -m pip install -r requirements-lock.txt
+
+Nếu dùng macOS/Linux, thay .\.venv\Scripts\python.exe bằng .venv/bin/python.
+Không cần tải mô hình NLP, khóa API, NLTK corpus hay dịch vụ bên ngoài để chạy project.
+
+2. BƯỚC 1 THEO ĐỀ: DỮ LIỆU
+
+Mở data/items.csv: 36 môn; mỗi dòng gồm ID, mã môn, tên, khoa, đề cương và kỹ năng.
+Mở data/ratings.csv: 14 sinh viên U001–U014, mỗi người 18 đánh giá, tổng 252 dòng.
+
+Tính độ thưa:
+    Tổng số ô = 14 × 36 = 504.
+    Số ô đã có điểm = 252.
+    Tỷ lệ thiếu = 1 − 252/504 = 50%.
+
+Môn C036/SWE390 là môn mới chưa có đánh giá nào. U001 đã chấm 6 môn AI/data C007–C012 đều 5/5. Các nhóm sở thích được dùng duy nhất khi tạo dữ liệu, không được truyền vào thuật toán gợi ý.
+
+Tái tạo đúng CSV bằng seed cố định:
+    .\.venv\Scripts\python.exe scripts/generate_data.py
+
+Đọc scripts/generate_data.py để hiểu cách tạo 6 đánh giá trong nhóm ưu tiên và 12 môn ngoài nhóm, cùng phân phối điểm và nhận xét. Không gọi dữ liệu này là khảo sát sinh viên thật.
+
+3. BƯỚC 2 THEO ĐỀ: NLP
+
+Đọc src/nlp_pipeline.py theo thứ tự:
+    clean_text → tokenize → NLPPipeline.fit → transform → similarities → matching_keywords.
+
+Ví dụ “Backend/API, CLOUD!” được làm sạch thành “backend api cloud”. Dấu câu được thay bằng khoảng trắng để không ghép nhầm hai từ. Tách từ theo khoảng trắng, bỏ từ dừng tiếng Anh và token một ký tự.
+
+Ghép title + syllabus_text + skills_tags cho từng môn. TfidfVectorizer học từ vựng trên catalog này với unigram và bigram. Ví dụ “cloud deployment” là một bigram. Không đưa điểm hoặc feedback vào TF-IDF.
+
+Công thức áp dụng trong scikit-learn:
+    tf = 1 + ln(số lần xuất hiện) với một từ đã xuất hiện.
+    idf = ln((1 + số văn bản)/(1 + số văn bản chứa từ)) + 1.
+    Vector được chuẩn hóa L2.
+    cosine(q, d) = (q · d)/(|q| |d|).
+
+Truy vấn mới chỉ gọi transform; không học lại từ vựng từ câu truy vấn. Từ chưa từng có trong catalog bị bỏ qua. Nếu mọi từ đều ngoài từ vựng, CLI báo lỗi rõ ràng. Đây là mô hình khớp từ tiếng Anh, không phải mô hình hiểu ngữ nghĩa đa ngôn ngữ.
+
+4. BƯỚC 3 THEO ĐỀ: CÁC BỘ GỢI Ý
+
+Đọc src/recommender.py.
+
+Popularity:
+    Điểm = (n × trung bình môn + 3 × trung bình toàn cục)/(n + 3).
+    Chỉ nhận môn có ít nhất 2 lượt đánh giá; bỏ môn đã có trong lịch sử người dùng.
+    Đây là baseline có làm trơn để hạn chế một môn chỉ có vài điểm cao đứng quá cao.
+
+Content:
+    Truy vấn: cosine giữa vector câu và vector từng môn.
+    Item-to-item: cosine giữa vector môn gốc và các môn khác, bỏ chính môn gốc.
+    Hồ sơ sinh viên: trung bình có trọng số các vector môn đã học, trọng số max(rating−3, 0).
+    Nếu không có điểm >3, dùng chính rating làm trọng số dự phòng.
+    Khuyến nghị môn chưa đánh giá có cosine cao nhất với hồ sơ.
+
+User-Based Collaborative Filtering:
+    Tìm hai sinh viên có ít nhất 3 môn chung; tính Pearson trên điểm của các môn chung.
+    Thu nhỏ độ tương đồng: Pearson × số môn chung/(số môn chung + 5).
+    Giữ tối đa 5 láng giềng có tương đồng dương.
+    Dự đoán điểm = trung bình người dùng + trung bình có trọng số độ lệch điểm của láng giềng.
+    Nếu không có láng giềng đã đánh giá môn đó, dùng điểm Popularity có làm trơn.
+    Cắt kết quả về khoảng 1–5. Điểm chưa tồn tại không bị coi là 0.
+
+Hybrid với sinh viên có lịch sử:
+    0,55 × cosine + 0,25 × ((điểm CF−1)/4) + 0,20 × ((điểm Popularity−1)/4).
+Hybrid với người mới chỉ có câu truy vấn:
+    0,75 × cosine + 0,25 × ((điểm Popularity−1)/4).
+
+Môn chưa có đánh giá dùng trung bình toàn cục làm prior cho phần điểm. Điểm content vẫn được tính từ đề cương nên môn mới có thể xuất hiện. Trọng số là lựa chọn thiết kế cố định trước đánh giá, chưa được tối ưu bằng tập validation.
+
+Thử từng cách:
+    .\.venv\Scripts\python.exe src/main.py --user U001 --method popularity
+    .\.venv\Scripts\python.exe src/main.py --user U001 --method content
+    .\.venv\Scripts\python.exe src/main.py --user U001 --method cf
+    .\.venv\Scripts\python.exe src/main.py --user U001 --method hybrid
+
+Tìm môn giống môn Backend API Development:
+    .\.venv\Scripts\python.exe src/main.py --item C001
+
+Truy vấn tùy chỉnh (nhập tiếng Anh):
+    .\.venv\Scripts\python.exe src/main.py --query "I want to learn network security and cryptography"
+
+Kết hợp lịch sử với mục tiêu mới:
+    .\.venv\Scripts\python.exe src/main.py --user U001 --query "backend APIs and cloud deployment" --method hybrid
+
+5. BƯỚC 4 THEO ĐỀ: ĐÁNH GIÁ VÀ BIỂU ĐỒ
+
+Chạy:
+    .\.venv\Scripts\python.exe src/evaluate.py
+
+Mỗi sinh viên có 18 điểm; chương trình chọn ngẫu nhiên ceil(18 × 20%) = 4 điểm để ẩn. Tổng train = 196 điểm, test = 56 điểm, seed = 42. Vì làm tròn theo từng sinh viên, tỷ lệ test thực tế là 22,22%.
+
+Model được xây dựng chỉ với train. Khi gợi ý, toàn bộ catalog được xét trừ các môn xuất hiện trong train của sinh viên đó. Các môn ẩn trong test vẫn có thể được gợi ý. Môn test có rating >=4 được coi là phù hợp.
+
+Ví dụ có 2 môn phù hợp bị ẩn lọt vào Top-5:
+    Precision@5 = 2/5 = 0,4.
+Chương trình lấy trung bình trên cả 14 sinh viên, kể cả sinh viên không có môn phù hợp bị ẩn (precision của họ bằng 0). Recall chỉ trung bình trên người có ít nhất một môn phù hợp bị ẩn. MAE/RMSE chỉ áp dụng cho CF vì CF dự đoán điểm 1–5; score Hybrid không phải điểm đánh giá 1–5.
+
+Kiểm tra tệp đầu ra:
+    results/metrics.csv                   Bảng so sánh 4 phương pháp
+    results/per_user_metrics.csv          Mỗi sinh viên, hits, mẫu số, danh sách Top-5
+    results/train_ratings.csv             Những điểm model được phép thấy
+    results/test_ratings.csv              Những điểm đã ẩn
+    results/rating_predictions.csv        Dự đoán CF so với điểm thật
+    results/evaluation_metadata.json      Seed, thông số, MAE và RMSE
+    results/evaluation_summary.txt        Báo cáo đánh giá dạng văn bản
+    results/data_distribution.png        Phân bố điểm và môn theo khoa
+    results/evaluation_comparison.png    So sánh Precision@5
+
+Muốn thử split khác mà không ghi đè kết quả chuẩn:
+    .\.venv\Scripts\python.exe src/evaluate.py --seed 7 --output-dir results/seed7
+
+Không kết luận mô hình tốt nhất trong thực tế chỉ từ bộ dữ liệu mô phỏng nhỏ này. Trong đánh giá, môn chưa được người dùng đánh giá bị tính là không trúng, dù thực tế có thể phù hợp. Xem phần hạn chế trong README.
+
+6. BƯỚC 5 THEO ĐỀ: DEMO VÀ TÀI LIỆU
+
+Chạy ba tình huống và lưu kết quả:
+    .\.venv\Scripts\python.exe src/main.py --demo --save-samples
+
+Test 1: Câu mục tiêu backend/cloud/databases đúng nguyên văn đề.
+Test 2: In các môn AI/data U001 chấm 5/5, rồi in 5 môn tiếp theo chưa đánh giá.
+Test 3: Dựng catalog 35 môn; thêm lại C036 để thành 36 môn, giữ nguyên 252 đánh giá. Chạy truy vấn serverless phù hợp và kiểm tra C036 xuất hiện Top-5. Chương trình dừng bằng assertion nếu điều kiện này sai.
+
+Xem tất cả tùy chọn:
+    .\.venv\Scripts\python.exe src/main.py --help
+
+Chạy kiểm thử tự động:
+    .\.venv\Scripts\python.exe -m unittest discover -s tests -v
+
+Các kiểm thử xác minh dữ liệu, điểm sai, bản ghi trùng, từ vựng truy vấn, lọc môn đã học, ngưỡng Popularity, cold-start, phụ thuộc điểm CF vào láng giềng, tách train/test không giao nhau và không phụ thuộc nhãn ẩn, công thức Precision@5 và lỗi nhập CLI.
+
+7. GITHUB VÀ NỘP BÀI
+
+Lịch sử đã được tạo bằng những commit theo các cột mốc thực tế, không thay ngày hoặc tạo lịch sử giả. Xem:
+    git log --oneline --reverse
+    git status
+
+Để đẩy bản thư mục có .git lên repo trống cùng tên trên tài khoản DATNGUYEN1703:
+    git remote add origin https://github.com/DATNGUYEN1703/cs467-miniproject-29211148673.git
+    git push -u origin main
+
+Nếu đã có origin, không thêm lần nữa; kiểm tra git remote -v. Không force-push đè nội dung repository có sẵn.
+
+Nếu dùng bản ZIP mã nguồn không có .git, hãy dùng clone từ GitHub để lấy lịch sử thay vì tự tạo lại 5 commit từ các tệp đã hoàn thành.
+
+Mở liên kết repository không đăng nhập để kiểm tra công khai, đọc được README và 2 biểu đồ. Kiểm tra đủ data/, src/, results/ và ít nhất 5 commit. Sau đó bạn tự nộp URL repository vào cổng môn học vì đề chưa cung cấp địa chỉ cổng nộp.
+
+8. CHUẨN BỊ HỎI ĐÁP
+
+• Vì sao dùng TF-IDF? Nhẹ, dễ giải thích và phù hợp dữ liệu văn bản nhỏ; cho biết từ nào tạo sự khớp.
+• Vì sao bigram? Giữ các cụm “cloud deployment”, “machine learning”, giúp phân biệt với từ rời.
+• Vì sao cosine? So sánh hướng vector đã chuẩn hóa thay vì độ dài văn bản.
+• Vì sao Popularity không cá nhân hóa? Nó dùng đánh giá chung, chỉ cá nhân hóa ở bước bỏ môn đã học.
+• Vì sao CF giúp? Nó khai thác sở thích tương tự trong điểm số, dù đề cương không dùng chung từ.
+• Vì sao cần làm trơn? Tránh quá tin vào số đánh giá ít, đồng thời có điểm dự phòng cho môn mới.
+• Vì sao cold-start vẫn hoạt động? Content dùng đề cương/kỹ năng nên không đòi điểm sinh viên.
+• Có rò rỉ dữ liệu không? Các thống kê điểm, hồ sơ và láng giềng chỉ học từ train. TF-IDF nhìn catalog có sẵn, không nhìn nhãn test.
+• Vì sao Precision thấp vẫn có thể hợp lý? Chỉ vài môn phù hợp bị ẩn và chưa biết mức thích của người dùng với phần lớn catalog.
+• Vì sao Hybrid không nhất thiết luôn thắng? Dữ liệu nhỏ, trọng số cố định, tín hiệu có thể nhiễu. Báo cáo kết quả đo được, không sửa số để tạo thứ hạng mong muốn.
+• Các hạn chế chính? Dữ liệu mô phỏng, chỉ tiếng Anh, không xét lịch học, tín chỉ và môn tiên quyết; chưa có kiểm chứng với sinh viên thật.
+
+Hãy tự thay một câu mục tiêu, một mã sinh viên, một seed đánh giá và giải thích thay đổi trước khi nộp bài.
