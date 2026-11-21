@@ -1,84 +1,55 @@
-MP-A03: THREE REQUIRED TEST CASES
-Dataset is fictional; scores are ranking signals, not probabilities.
-English syllabi and English goal statements are supported.
-
-TEST 1 - Career goal query (hybrid)
+TEST 1 - Career goal query (Hybrid)
 Query: I want to learn backend APIs, cloud deployment, and databases
-1. C036 SWE390 | Serverless Cloud APIs (New Elective)
-   score=0.5490 | cosine=0.5230 | ratings=0
-   Shared terms: cloud, apis cloud, apis, cloud deployment; new course, no ratings (global-mean prior)
-2. C004 SWE304 | Distributed Microservices
-   score=0.4395 | cosine=0.3601 | ratings=9
-   Shared terms: cloud deployment, apis, cloud, deployment; 9 ratings
-3. C002 SWE302 | Cloud Application Deployment
-   score=0.4008 | cosine=0.3350 | ratings=6
-   Shared terms: cloud, deployment, cloud deployment, backend; 6 ratings
-4. C001 SWE301 | Backend API Development
-   score=0.3519 | cosine=0.2232 | ratings=7
-   Shared terms: apis, backend apis, backend, databases; 7 ratings
-5. C006 SWE306 | NoSQL and Data Storage
-   score=0.2675 | cosine=0.1204 | ratings=6
-   Shared terms: databases, backend; 6 ratings
+1. C004 | Distributed Microservices
+   Score: 0.4885; cosine: 0.4198; ratings: 9
+   Keywords: cloud deployment, apis, cloud, deployment
+2. C002 | Cloud Application Deployment
+   Score: 0.4345; cosine: 0.3848; ratings: 6
+   Keywords: cloud, deployment, cloud deployment, backend
+3. C001 | Backend API Development
+   Score: 0.3873; cosine: 0.2544; ratings: 7
+   Keywords: apis, backend apis, backend, databases
+4. C006 | NoSQL and Data Storage
+   Score: 0.2911; cosine: 0.1381; ratings: 6
+   Keywords: databases, backend
+5. C003 | Database Systems and SQL
+   Score: 0.2615; cosine: 0.1265; ratings: 9
+   Keywords: databases, backend
 
-TEST 2 - Existing AI/data student U001 (content and hybrid comparison)
-Observed AI/data courses rated 5/5:
-  C007: Applied Machine Learning (5/5)
-  C008: Deep Learning Foundations (5/5)
-  C009: Natural Language Processing (5/5)
-  C010: Data Mining and Analytics (5/5)
-  C011: Computer Vision (5/5)
-  C012: Recommendation Systems (5/5)
-  C035: Responsible Artificial Intelligence (5/5)
-Content-based next unseen electives:
-1. C029 BUS305 | Financial Data Analytics
-   score=0.0801 | cosine=0.0801 | ratings=9
-   Shared terms: data, python, analytics, build; 9 ratings
-2. C032 CS302 | Statistical Computing
-   score=0.0728 | cosine=0.0728 | ratings=5
-   Shared terms: data, python, analysis, experiments; 5 ratings
-3. C025 BUS301 | Business Intelligence
-   score=0.0683 | cosine=0.0683 | ratings=8
-   Shared terms: data, analytics, intelligence, model; 8 ratings
-4. C001 SWE301 | Backend API Development
-   score=0.0518 | cosine=0.0518 | ratings=7
-   Shared terms: python, build, validation, apis; 7 ratings
-5. C030 BUS306 | Operations Analytics
-   score=0.0450 | cosine=0.0450 | ratings=8
-   Shared terms: data, analytics, model, business; 8 ratings
-Hybrid next unseen electives:
-1. C022 UX304 | Mobile Interaction Design
-   score=0.3611 | cosine=0.0068 | CF=4.565/5 | ratings=5
-   Shared terms: user, design; 5 ratings
-2. C006 SWE306 | NoSQL and Data Storage
-   score=0.3502 | cosine=0.0387 | CF=3.994/5 | ratings=6
-   Shared terms: data, build, document, backend; 6 ratings
-3. C001 SWE301 | Backend API Development
-   score=0.3420 | cosine=0.0518 | CF=3.654/5 | ratings=7
-   Shared terms: python, build, validation, apis; 7 ratings
-4. C030 BUS306 | Operations Analytics
-   score=0.3405 | cosine=0.0450 | CF=4.123/5 | ratings=8
-   Shared terms: data, analytics, model, business; 8 ratings
-5. C016 SEC304 | Secure Software Design
-   score=0.3334 | cosine=0.0030 | CF=4.056/5 | ratings=5
-   Shared terms: apply, design; 5 ratings
+TEST 2 - Existing student (Content)
+U001 rated six AI/data courses C007-C012 5/5. Recommend unseen electives:
+1. C029 | Financial Data Analytics
+   Score: 0.0801; cosine: 0.0801; ratings: 9
+   Keywords: data, python, analytics, build
+2. C032 | Statistical Computing
+   Score: 0.0723; cosine: 0.0723; ratings: 5
+   Keywords: data, python, analysis, experiments
+3. C025 | Business Intelligence
+   Score: 0.0677; cosine: 0.0677; ratings: 8
+   Keywords: data, analytics, intelligence, model
+4. C001 | Backend API Development
+   Score: 0.0530; cosine: 0.0530; ratings: 7
+   Keywords: python, build, apis, backend
+5. C030 | Operations Analytics
+   Score: 0.0446; cosine: 0.0446; ratings: 8
+   Keywords: data, analytics, model, business
 
-TEST 3 - Add a newly launched course without ratings
-Catalog before: 35; after: 36; ratings unchanged: 252
-Added C036: Serverless Cloud APIs (New Elective) (0 student ratings)
-Query: I want to build serverless backend APIs with cloud functions, cloud deployment and managed databases
-1. C036 SWE390 | Serverless Cloud APIs (New Elective)
-   score=0.6921 | cosine=0.7139 | ratings=0
-   Shared terms: cloud, serverless, cloud functions, functions; new course, no ratings (global-mean prior)
-2. C004 SWE304 | Distributed Microservices
-   score=0.3684 | cosine=0.2654 | ratings=9
-   Shared terms: cloud, cloud deployment, apis, deployment; 9 ratings
-3. C002 SWE302 | Cloud Application Deployment
-   score=0.3446 | cosine=0.2602 | ratings=6
-   Shared terms: cloud, deployment, cloud deployment, backend; 6 ratings
-4. C001 SWE301 | Backend API Development
-   score=0.3066 | cosine=0.1628 | ratings=7
-   Shared terms: apis, backend apis, backend, databases; 7 ratings
-5. C006 SWE306 | NoSQL and Data Storage
-   score=0.2475 | cosine=0.0937 | ratings=6
-   Shared terms: databases, backend, build; 6 ratings
-PASS: the new unrated elective appears in Top-5 via its syllabus terms.
+TEST 3 - Newly launched course (Hybrid)
+Added C036: catalog 35 -> 36 courses; no new ratings.
+Query: serverless backend APIs, cloud functions, cloud deployment and managed databases
+1. C036 | Serverless Cloud APIs (New Elective)
+   Score: 0.6846; cosine: 0.7038; ratings: 0
+   Keywords: cloud, serverless, cloud functions, functions
+2. C004 | Distributed Microservices
+   Score: 0.3836; cosine: 0.2799; ratings: 9
+   Keywords: cloud, cloud deployment, apis, deployment
+3. C002 | Cloud Application Deployment
+   Score: 0.3517; cosine: 0.2745; ratings: 6
+   Keywords: cloud, deployment, cloud deployment, backend
+4. C001 | Backend API Development
+   Score: 0.3137; cosine: 0.1564; ratings: 7
+   Keywords: apis, backend apis, backend, databases
+5. C006 | NoSQL and Data Storage
+   Score: 0.2508; cosine: 0.0843; ratings: 6
+   Keywords: databases, backend
+PASS: the new course appears in Top-5 with zero ratings.
